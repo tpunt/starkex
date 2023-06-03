@@ -90,27 +90,16 @@ Returns x, y, g such that g = x*a + y*b = gcd(a, b).
        4
 */
 func igcdex(a, b *big.Int) (*big.Int, *big.Int, *big.Int) {
-	if a.Cmp(zero) == 0 && a.Cmp(zero) == 0 {
-		return big.NewInt(0), big.NewInt(1), big.NewInt(0)
-	}
+	zero := big.NewInt(0)
+	one := big.NewInt(1)
+
 	if a.Cmp(zero) == 0 {
-		return big.NewInt(0), big.NewInt(0).Quo(b, big.NewInt(0).Abs(b)), big.NewInt(0).Abs(b)
+		return b, zero, one
 	}
-	if b.Cmp(zero) == 0 {
-		return big.NewInt(0).Quo(a, big.NewInt(0).Abs(a)), big.NewInt(0), big.NewInt(0).Abs(a)
-	}
-	xSign := big.NewInt(1)
-	ySign := big.NewInt(1)
-	if a.Cmp(zero) == -1 {
-		a, xSign = a.Neg(a), big.NewInt(-1)
-	}
-	if b.Cmp(zero) == -1 {
-		b, ySign = b.Neg(b), big.NewInt(-1)
-	}
-	x, y, r, s := big.NewInt(1), big.NewInt(0), big.NewInt(0), big.NewInt(1)
-	for b.Cmp(zero) > 0 {
-		c, q := big.NewInt(0).Mod(a, b), big.NewInt(0).Quo(a, b)
-		a, b, r, s, x, y = b, c, big.NewInt(0).Sub(x, big.NewInt(0).Mul(q, r)), big.NewInt(0).Sub(y, big.NewInt(0).Mul(big.NewInt(0).Neg(q), s)), r, s
-	}
-	return x.Mul(x, xSign), y.Mul(y, ySign), a
+
+	gcd, x1, y1 := igcdex(new(big.Int).Mod(b, a), a)
+	x := new(big.Int).Sub(y1, new(big.Int).Mul(new(big.Int).Div(b, a), x1))
+	y := x1
+
+	return gcd, x, y
 }
